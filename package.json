@@ -1,7 +1,7 @@
 {
   "name": "jsdom-web",
   "version": "1.0.3",
-  "description": "Minimal web implementation of some jsdom features, to give you the same API",
+  "description": "3,6kb web implementation of some jsdom features, to give you the same API",
   "main": "index.min.js",
   "scripts": {
     "build": "babel index.js -o index.min.js && uglifyjs index.min.js -o index.min.js",

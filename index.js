@@ -9,7 +9,7 @@ function JSDOM (html, options) {
     var p = this
 
     // Constructor
-    var TagsThatBelongInHead = ['title', 'base', 'link', 'meta', 'style', 'script', 'noscript', 'template']
+    var ttbh = ['title', 'base', 'link', 'meta', 'style', 'script', 'noscript', 'template']
 
     p.sb = document.createElement('html')
 
@@ -66,7 +66,7 @@ function JSDOM (html, options) {
 
             appendChild: function (child) {
                 // Check if child belongs in head
-                if (TagsThatBelongInHead.includes(child.tagName.toLowerCase())) {
+                if (ttbh.includes(child.tagName.toLowerCase())) {
                     sbox.querySelector('head').appendChild(child)
                 } else {
                     return sbox.querySelector('body').appendChild(child)
@@ -78,7 +78,7 @@ function JSDOM (html, options) {
                     if (typeof child === 'string') {
                         sbox.querySelector('body').append(child);
                     } else {
-                        if (TagsThatBelongInHead.includes(child.tagName.toLowerCase())) {
+                        if (ttbh.includes(child.tagName.toLowerCase())) {
                             sbox.querySelector('head').appendChild(child);
                         } else {
                             sbox.querySelector('body').appendChild(child);
@@ -87,7 +87,7 @@ function JSDOM (html, options) {
                 }
             },
             insertBefore: function (child, referenceNode) {
-                if (TagsThatBelongInHead.includes(child.tagName.toLowerCase())) {
+                if (ttbh.includes(child.tagName.toLowerCase())) {
                     sbox.querySelector('head').insertBefore(child, referenceNode)
                 } else {
                     return sbox.querySelector('body').insertBefore(child, referenceNode)
@@ -177,7 +177,7 @@ function JSDOM (html, options) {
     // Go through every element in the body and put it in the head if it belongs in head
     for (var _ib = 0; _ib < p.sb.querySelector('body').length; _ib++) {
         var element = p.sb.querySelector('body')[_ib]
-        if (TagsThatBelongInHead.includes(element.tagName.toLowerCase())) {
+        if (ttbh.includes(element.tagName.toLowerCase())) {
             p.window.document.head.appendChild(element)
         }
     }

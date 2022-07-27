@@ -1,5 +1,5 @@
 # jsdom-web
- 3,85kb web implementation of some jsdom features, to give you the same API
+ 3,6kb web implementation of some jsdom features, to give you the same API
 
 **NOTE:** Only most important features are implemented. The goal of this is to provide a lightweight implementation of the core jsdom API for the web, without implementing an own serializer and instead using the native document.createElement() and document.createTextNode() methods.
 
