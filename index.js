@@ -14,6 +14,8 @@ function JSDOM (html, options) {
     this.sandbox.append(document.createElement('head'))
     this.sandbox.append(document.createElement('body'))
 
+    var sbox = this.sandbox
+
     this.window = {
         eval: function (code) {
             // Generate sandboxid
@@ -22,7 +24,7 @@ function JSDOM (html, options) {
 
 
             // Execute the script inside the sandbox DOM context
-            var scriptcode = "(function(document, window) {" + code + "}})(window['_jsdom-sandbox+" + sandboxid + "'].document, window['_jsdom-sandbox+" + sandboxid + "'].window);"
+            var scriptcode = "(function(document, window) {" + code + "})(window['_jsdom-sandbox+" + sandboxid + "'].document, window['_jsdom-sandbox+" + sandboxid + "'].window);"
 
             // Evaluate it
             eval(scriptcode)
@@ -39,60 +41,61 @@ function JSDOM (html, options) {
             },
 
             querySelector: function (selector) {
-                return this.sandbox.querySelector(selector)
+                return sbox.querySelector(selector)
             },
             querySelectorAll: function (selector) {
-                return this.sandbox.querySelectorAll(selector)
+                return sbox.querySelectorAll(selector)
             },
             getElementsByTagName: function (tagName) {
-                return this.sandbox.getElementsByTagName(tagName)
+                return sbox.getElementsByTagName(tagName)
             },
             getElementsByTagNameNS: function (namespace, tagName) {
-                return this.sandbox.getElementsByTagNameNS(namespace, tagName)
+                return sbox.getElementsByTagNameNS(namespace, tagName)
             },
             getElementsByClassName: function (className) {
-                return this.sandbox.getElementsByClassName(className)
+                return sbox.getElementsByClassName(className)
             },
             getElementsByName: function (name) {
-                return this.sandbox.getElementsByName(name)
+                return sbox.getElementsByName(name)
             },
             getElementsByNameNS: function (namespace, name) {
-                return this.sandbox.getElementsByNameNS(namespace, name)
+                return sbox.getElementsByNameNS(namespace, name)
             },
 
             appendChild: function (child) {
                 // Check if child belongs in head
                 if (TagsThatBelongInHead.includes(child.tagName.toLowerCase())) {
-                    this.sandbox.querySelector('head').appendChild(child)
+                    sbox.querySelector('head').appendChild(child)
                 } else {
-                    return this.sandbox.querySelector('body').appendChild(child)
+                    return sbox.querySelector('body').appendChild(child)
                 }
             },
             append: function () {
                 for (var _ic = 0; _ic < arguments.length; _ic++) {
+                    var child = arguments[_ic]
                     if (typeof child === 'string') {
-                        this.sandbox.querySelector('body').append(child);
+                        sbox.querySelector('body').append(child);
                     } else {
                         if (TagsThatBelongInHead.includes(child.tagName.toLowerCase())) {
-                            this.sandbox.querySelector('head').appendChild(child);
+                            sbox.querySelector('head').appendChild(child);
                         } else {
-                            this.sandbox.querySelector('body').appendChild(child);
+                            sbox.querySelector('body').appendChild(child);
                         }
                     }
                 }
             },
             insertBefore: function (child, referenceNode) {
                 if (TagsThatBelongInHead.includes(child.tagName.toLowerCase())) {
-                    this.sandbox.querySelector('head').insertBefore(child, referenceNode)
+                    sbox.querySelector('head').insertBefore(child, referenceNode)
                 } else {
-                    return this.sandbox.querySelector('body').insertBefore(child, referenceNode)
+                    return sbox.querySelector('body').insertBefore(child, referenceNode)
                 }
             },
             insertAdjacentHTML: function (position, html) {
-                this.sandbox.querySelector('body').insertAdjacentHTML(position, html)
+                sbox.querySelector('body').insertAdjacentHTML(position, html)
             },
             insertAdjacentText: function (position, text) {
-                this.sandbox.querySelector('body').insertAdjacentText(position, text)
+                sbox.querySelector('body').insertAdjacentText(position, text)
             }
         },
         window: this,
@@ -151,6 +154,7 @@ function JSDOM (html, options) {
         'createXPathNSResolver'
     ]
     for (var _id = 0; _id < documentCreateFuncNames.length; _id++) {
+        var funcName = documentCreateFuncNames[_id]
         this.window.document[funcName] = function (a, b, c, d, e, f, g) { return document[funcname](a, b, c, d, e, f, g) }
     }
 
@@ -160,6 +164,7 @@ function JSDOM (html, options) {
     if (options && options.runScripts === 'dangerously') {
         var scripts = this.sandbox.querySelectorAll('script')
         for (var _ia = 0; _ia < scripts.length; _ia++) {
+            var script = scripts[_ia]
             var scriptText = script.innerHTML
 
             this.window.eval(scriptText)
@@ -167,6 +172,7 @@ function JSDOM (html, options) {
     }
     // Go through every element in the body and put it in the head if it belongs in head
     for (var _ib = 0; _ib < this.sandbox.querySelector('body').length; _ib++) {
+        var element = this.sandbox.querySelector('body')[_ib]
         if (TagsThatBelongInHead.includes(element.tagName.toLowerCase())) {
             this.window.document.head.appendChild(element)
         }
