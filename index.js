@@ -6,21 +6,23 @@ function JSDOM (html, options) {
         return new JSDOM(html, options);
     }
 
+    var p = this
+
     // Constructor
     var TagsThatBelongInHead = ['title', 'base', 'link', 'meta', 'style', 'script', 'noscript', 'template']
 
-    this.sandbox = document.createElement('html')
+    p.sb = document.createElement('html')
 
-    this.sandbox.append(document.createElement('head'))
-    this.sandbox.append(document.createElement('body'))
+    p.sb.append(document.createElement('head'))
+    p.sb.append(document.createElement('body'))
 
-    var sbox = this.sandbox
+    var sbox = p.sb
 
-    this.window = {
+    p.window = {
         eval: function (code) {
             // Generate sandboxid
             var sandboxid = Array.from({ length: 200 }, function () { return Math.floor(Math.random() * 10) }).join('')
-            window['_jsdom-sandbox+' + sandboxid] = this
+            window['_jsdom-sandbox+' + sandboxid] = p
 
 
             // Execute the script inside the sandbox DOM context
@@ -31,13 +33,13 @@ function JSDOM (html, options) {
         },
         document: {
             get body() {
-                return this.querySelector('body')
+                return p.querySelector('body')
             },
             get head() {
-                return this.querySelector('head')
+                return p.querySelector('head')
             },
             get documentElement() {
-                return this.querySelector('html')
+                return p.querySelector('html')
             },
 
             querySelector: function (selector) {
@@ -98,7 +100,7 @@ function JSDOM (html, options) {
                 sbox.querySelector('body').insertAdjacentText(position, text)
             }
         },
-        window: this,
+        window: p,
         navigator: navigator,
         history: {
             pushState: function () { },
@@ -127,11 +129,11 @@ function JSDOM (html, options) {
                 return
             }
 
-            this.sandbox.addEventListener(type, listener)
+            p.sb.addEventListener(type, listener)
         }
     }
 
-    var documentCreateFuncNames = [
+    var dcfn = [
         'createElement',
         'createTextNode',
         'createComment',
@@ -153,33 +155,35 @@ function JSDOM (html, options) {
         'createXPathEvaluator',
         'createXPathNSResolver'
     ]
-    for (var _id = 0; _id < documentCreateFuncNames.length; _id++) {
-        var funcName = documentCreateFuncNames[_id]
-        this.window.document[funcName] = function (a, b, c, d, e, f, g) { return document[funcName](a, b, c, d, e, f, g) }
-    }
 
-    this.sandbox.querySelector('body').innerHTML = html
+    dcfn.forEach(function _(fn) {
+        p.window.document[fn] = function () {
+            return document[fn].apply(document, arguments)
+        }
+    })
+
+    p.sb.querySelector('body').innerHTML = html
 
     // Run scripts if options.runScripts is "dangerously"
     if (options && options.runScripts === 'dangerously') {
-        var scripts = this.sandbox.querySelectorAll('script')
+        var scripts = p.sb.querySelectorAll('script')
         for (var _ia = 0; _ia < scripts.length; _ia++) {
             var script = scripts[_ia]
             var scriptText = script.innerHTML
 
-            this.window.eval(scriptText)
+            p.window.eval(scriptText)
         }
     }
     // Go through every element in the body and put it in the head if it belongs in head
-    for (var _ib = 0; _ib < this.sandbox.querySelector('body').length; _ib++) {
-        var element = this.sandbox.querySelector('body')[_ib]
+    for (var _ib = 0; _ib < p.sb.querySelector('body').length; _ib++) {
+        var element = p.sb.querySelector('body')[_ib]
         if (TagsThatBelongInHead.includes(element.tagName.toLowerCase())) {
-            this.window.document.head.appendChild(element)
+            p.window.document.head.appendChild(element)
         }
     }
 
 
-    this.document = this.window.document;
+    p.document = p.window.document;
 }
 
 window.JSDOM = JSDOM
