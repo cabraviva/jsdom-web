@@ -1,0 +1,33 @@
+{
+  "name": "jsdom-web",
+  "version": "1.0.0",
+  "description": "Minimal web implementation of some jsdom features, to give you the same API",
+  "main": "index.min.js",
+  "scripts": {
+    "build": "babel index.js -o index.min.js && uglifyjs index.min.js -o index.min.js",
+    "build-notransp": "uglifyjs index.js -o index.min.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/greencoder001/jsdom-web.git"
+  },
+  "keywords": [
+    "jsdom",
+    "web",
+    "browser",
+    "dom"
+  ],
+  "author": "greencoder001",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/greencoder001/jsdom-web/issues"
+  },
+  "homepage": "https://github.com/greencoder001/jsdom-web#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.18.9",
+    "@babel/core": "^7.18.9",
+    "@babel/preset-env": "^7.18.9",
+    "uglify-js": "^3.16.3"
+  }
+}

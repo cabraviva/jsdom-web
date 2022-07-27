@@ -1,0 +1,6 @@
+.dccache
+.gitattributes
+.gitignore
+.jshintrc
+babel.config.json
+index.js
