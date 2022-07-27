@@ -155,7 +155,7 @@ function JSDOM (html, options) {
     ]
     for (var _id = 0; _id < documentCreateFuncNames.length; _id++) {
         var funcName = documentCreateFuncNames[_id]
-        this.window.document[funcName] = function (a, b, c, d, e, f, g) { return document[funcname](a, b, c, d, e, f, g) }
+        this.window.document[funcName] = function (a, b, c, d, e, f, g) { return document[funcName](a, b, c, d, e, f, g) }
     }
 
     this.sandbox.querySelector('body').innerHTML = html
