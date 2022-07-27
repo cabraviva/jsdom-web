@@ -1,6 +1,6 @@
 {
   "name": "jsdom-web",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Minimal web implementation of some jsdom features, to give you the same API",
   "main": "index.min.js",
   "scripts": {
